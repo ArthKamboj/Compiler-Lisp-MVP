@@ -19,3 +19,24 @@ struct LispVal {
     LispVal(const char* s) : value(string(s)) {} 
 };
 
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+void print_lisp_val(const LispVal& val){
+
+    visit(overloaded {
+        [](double n){ cout << n; },
+        [](bool b){ cout << (b?"#t":"#f"); },
+        [](string& s){ cout << s; },
+        [](const LispList& l){
+            cout << "(";
+            for(size_t i=0; i<l.size(); ++i){
+                print_lisp_val(l[i]);
+                if(i<l.size()-1) cout << " ";
+            }
+            cout << ")";
+        }
+    }, val.value);
+    
+}
+
