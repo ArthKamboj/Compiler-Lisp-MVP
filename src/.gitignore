@@ -1,0 +1,21 @@
+# Ignore executables
+*.exe
+
+# Ignore object files
+*.o
+*.obj
+
+# Ignore binaries
+*.out
+*.app
+
+# Ignore build folders
+build/
+bin/
+dist/
+
+# VS Code
+.vscode/
+
+# Windows
+*.dll
