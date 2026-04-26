@@ -16,8 +16,17 @@ class Environment{
     public:
         Environment() : outer(nullptr) {}
         Environment(shared_ptr<Environment> outer_env) : outer(outer_env) {}
-        void set(string& symbol, const LispVal& val){
-            symbol_table[symbol] = val;
+        void set(const string& symbol, const LispVal& val){
+            symbol_table.insert_or_assign(symbol, val);
         }
-        
+        LispVal get(const string& symbol){
+            auto it = symbol_table.find(symbol);
+            if(it != symbol_table.end()){
+                return it->second;
+            }
+            if(outer){
+                return outer->get(symbol);
+            }
+            throw runtime_error("Unbound Symbol: "+symbol);
+        }
 };

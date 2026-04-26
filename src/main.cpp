@@ -7,6 +7,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "types.h"
+#include "environment.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 
 int main() {
 
-    string code = "(+ 1 (* 2 3))";
+    string code = "(+ x 3)";
     cout << "Input code: " << code << "\n";
 
     try{
@@ -26,7 +27,23 @@ int main() {
 
         cout << "AST parseed successfully: ";
         print_lisp_val(ast);
+        cout << "\n\n";
+
+        cout << "-----------Testing Env-----------" << endl;
+
+        auto global_env = make_shared<Environment>();
+
+        cout << "Define variable x as 10" << endl;
+        global_env->set("x", LispVal(10.0));
+
+        LispVal fetched_x = global_env->get("x");
+        cout << "Fetched x: ";
+        print_lisp_val(fetched_x);
         cout << endl;
+        
+        cout << "Fetch y: " << endl;
+        global_env->get("y");
+
     }
     catch(const exception e){
 
