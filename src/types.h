@@ -22,7 +22,7 @@ struct LispVal {
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-void print_lisp_val(const LispVal& val){
+inline void print_lisp_val(const LispVal& val){
 
     visit(overloaded {
         [](double n){ cout << n; },
@@ -38,19 +38,4 @@ void print_lisp_val(const LispVal& val){
         }
     }, val.value);
     
-}
-
-int main() {
-
-    LispList inner_list = { LispVal("*"), LispVal(2.0), LispVal(3.0) };
-    LispList outer_list = { LispVal("+"), LispVal(1.0), LispList(inner_list) };
-
-    LispVal abstract_syntax_tree = LispVal(outer_list);
-
-    cout << "AST output: ";
-    print_lisp_val(abstract_syntax_tree);
-    cout << endl;
-
-    return 0;
-
 }

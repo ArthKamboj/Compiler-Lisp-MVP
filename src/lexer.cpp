@@ -3,7 +3,7 @@
 
 using namespace std;
 
-vector<std::string> tokenize(const string& input) {
+vector<string> tokenize(const string& input) {
     string padded_input;
     
     for (char c : input) {
@@ -16,7 +16,7 @@ vector<std::string> tokenize(const string& input) {
         }
     }
 
-    vector<std::string> tokens;
+    vector<string> tokens;
     stringstream ss(padded_input);
     string token;
     

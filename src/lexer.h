@@ -4,4 +4,4 @@
 
 using namespace std;
 
-vector<std::string> tokenize(const string& input);
+vector<string> tokenize(const string& input);

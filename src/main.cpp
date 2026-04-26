@@ -1,47 +1,37 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
+#include <list>
+#include <exception>
+
+#include "lexer.h"
+#include "parser.h"
+#include "types.h"
 
 using namespace std;
 
-vector<string> tokenize(const string& input){
 
-    string padded_input;
-
-    for(char c : input){
-
-        if(c=='(')
-            padded_input += " ( ";
-        else if(c==')')
-            padded_input += " ) ";
-        else
-            padded_input += c;
-
-    }
-
-    vector<string> tokens;
-    stringstream ss(padded_input);
-    string token;
-
-    while(ss >> token){
-        tokens.push_back(token);
-    }
-
-    return tokens;
-
-}
 
 int main() {
 
     string code = "(+ 1 (* 2 3))";
-    vector<string> tokens = tokenize(code);
+    cout << "Input code: " << code << "\n";
 
-    for(const auto& t : tokens){
-        cout << "[" << t << "] ";
+    try{
+
+        vector<string> token_vec = tokenize(code);
+        list<string> tokens(token_vec.begin(), token_vec.end());
+        
+        LispVal ast = parse(tokens);
+
+        cout << "AST parseed successfully: ";
+        print_lisp_val(ast);
+        cout << endl;
     }
+    catch(const exception e){
 
-    cout << endl;
+        cerr << "Compilation Error: " << e.what() << endl;
+    }
 
     return 0;
 }
