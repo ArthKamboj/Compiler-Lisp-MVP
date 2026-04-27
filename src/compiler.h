@@ -15,3 +15,18 @@ enum class OpCode{
     SET_GLOBAL
 };
 
+struct  Instruction{
+    
+    OpCode op;
+    LispVal operand;
+    Instruction (OpCode o) : op(o), operand(false) {}
+    Instruction (OpCode o, LispVal val) : op(o), operand(val) {}
+};
+
+class Compiler{
+
+    public:
+        vector<Instruction> bytecode;
+        void compile(const LispVal& ast);
+        void disassemble();
+};
