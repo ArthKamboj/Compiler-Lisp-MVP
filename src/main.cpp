@@ -7,7 +7,8 @@
 #include "lexer.h"
 #include "parser.h"
 #include "types.h"
-#include "environment.h"
+// #include "environment.h"
+#include "compiler.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ using namespace std;
 
 int main() {
 
-    string code = "(+ x 3)";
+    string code = "(+ 10 (* 2 5))";
     cout << "Input code: " << code << "\n";
 
     try{
@@ -29,20 +30,11 @@ int main() {
         print_lisp_val(ast);
         cout << "\n\n";
 
-        cout << "-----------Testing Env-----------" << endl;
+        cout << "-----------Bytecode Compilation-----------" << endl;
 
-        auto global_env = make_shared<Environment>();
-
-        cout << "Define variable x as 10" << endl;
-        global_env->set("x", LispVal(10.0));
-
-        LispVal fetched_x = global_env->get("x");
-        cout << "Fetched x: ";
-        print_lisp_val(fetched_x);
-        cout << endl;
-        
-        cout << "Fetch y: " << endl;
-        global_env->get("y");
+        Compiler compiler;
+        compiler.compile(ast);
+        compiler.disassemble();
 
     }
     catch(const exception e){
