@@ -51,4 +51,16 @@ void Compiler::compile(const LispVal& ast){
 
 void Compiler::disassemble(){
 
+    for(const auto& inst : bytecode) {
+        switch (inst.op) {
+            case OpCode::CONST: cout << "CONST    "; print_lisp_val(inst.operand); break;
+            case OpCode::ADD: cout << "ADD"; break;
+            case OpCode::SUB: cout << "SUB"; break;
+            case OpCode::MUL: cout << "MUL"; break;
+            case OpCode::DIV: cout << "DIV"; break;
+            case OpCode::GET_GLOBAL: cout << "GET_GLOBAL "; print_lisp_val(inst.operand); break;
+            case OpCode::SET_GLOBAL: cout << "SET_GLOBAL "; print_lisp_val(inst.operand); break;
+        }
+        cout << endl;
+    }
 }
