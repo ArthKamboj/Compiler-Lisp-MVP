@@ -3,14 +3,36 @@
 #include <vector>
 #include <list>
 #include <exception>
+#include <memory>
 
 #include "lexer.h"
 #include "parser.h"
 #include "types.h"
-// #include "environment.h"
+#include "environment.h"
 #include "compiler.h"
+#include "vm.h"
 
 using namespace std;
+
+
+void execute(const string& code, shared_ptr<Environment> env) {
+
+    cout << "Executing: " << code << endl;
+
+    vector<string> token_vc = tokenize(code);
+    list<string> tokens(token_vc.begin(), token_vc.end());
+    LispVal ast = parse(tokens);
+
+    Compiler compiler;
+    compiler.compile(ast);
+
+    vm virmac(env);
+    LispVal result = virmac.run(compiler.bytecode);
+
+    cout << "----RESULT----" << "\n";
+    print_lisp_val(result);
+    cout << "\n--------------\n";
+}
 
 
 
