@@ -3,6 +3,10 @@
 
 using namespace std;
 
+void vm::push(const LispVal& val) {
+    stack.push_back(val);
+}
+
 LispVal vm::pop() {
 
     if(stack.empty()) throw runtime_error("VM stack underflow");
@@ -11,7 +15,7 @@ LispVal vm::pop() {
     return val;
 }
 
-double get_num(LispVal& v) {
+double get_num(const LispVal& v) {
 
     if(holds_alternative<double>(v.value)){
         return get<double>(v.value);
