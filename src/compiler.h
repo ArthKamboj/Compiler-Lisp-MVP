@@ -12,7 +12,10 @@ enum class OpCode{
     MUL,
     DIV,
     GET_GLOBAL,
-    SET_GLOBAL
+    SET_GLOBAL,
+    EQ,
+    LESS_THAN,
+    GREATER_THAN
 };
 
 struct  Instruction{
