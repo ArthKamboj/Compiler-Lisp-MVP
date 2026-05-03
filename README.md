@@ -103,31 +103,33 @@ Executing: (define age 20)
 ----RESULT----
 
 20
-
 --------------
+
 
 Executing: (if (>= age 18) 100 200)
 
 ----RESULT----
 
 100
-
 --------------
+
 
 Executing: (define square (lambda (x) (* x x)))
 
 ----RESULT----
 
 <function arity 1>
-
 --------------
+
 
 Executing: (+ (square 3) (square 4))
 
 ----RESULT----
 
 25
-
 --------------
+
+```
+
 
 ```
