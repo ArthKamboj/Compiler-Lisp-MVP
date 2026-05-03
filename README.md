@@ -56,3 +56,78 @@ This project requires a C++ compiler with C++17 support, such as GCC 7+, Clang 5
 To compile the project from the terminal, link all `.cpp` files together:
 ```bash
 g++ -std=c++17 main.cpp lexer.cpp parser.cpp compiler.cpp vm.cpp -o lisp_compiler
+```
+
+## Usage
+
+
+
+Run the compiled executable:
+
+
+
+- **Linux/macOS:** `./lisp_compiler`
+
+- **Windows:** `lisp_compiler.exe`
+
+
+
+## Example Execution
+
+
+
+The `main.cpp` file contains a test pipeline that sequentially executes Lisp commands, persisting the state of the variables across evaluations.
+
+
+
+### Lisp
+
+```lisp
+
+(define age 20)
+(if (>= age 18) 100 200)
+
+(define square (lambda (x) (* x x)))
+(+ (square 3) (square 4))
+
+```
+
+
+
+### Expected Output
+
+```plaintext
+
+Executing: (define age 20)
+
+----RESULT----
+
+20
+
+--------------
+
+Executing: (if (>= age 18) 100 200)
+
+----RESULT----
+
+100
+
+--------------
+
+Executing: (define square (lambda (x) (* x x)))
+
+----RESULT----
+
+<function arity 1>
+
+--------------
+
+Executing: (+ (square 3) (square 4))
+
+----RESULT----
+
+25
+
+--------------
+
+```
