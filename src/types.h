@@ -3,11 +3,20 @@
 #include <vector>
 #include <variant>
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
 struct LispVal;
+class Environment;
+
 using LispList = vector<LispVal>;
+
+struct LispFunction {
+    vector<string> params;
+    size_t ip;
+    shared_ptr<Environment> env;
+};
 
 struct LispVal {
     variant<double, bool, string, LispList> value;

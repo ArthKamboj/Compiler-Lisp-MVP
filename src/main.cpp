@@ -44,11 +44,13 @@ int main() {
 
         auto global_env = make_shared<Environment>();
 
-        execute("(define age 20)", global_env);
+        execute("(define score 85)", global_env);
         
-        execute("(if (> age 18) 100 200)", global_env);
+        execute("(if (>= score 85) 1 0)", global_env);
         
-        execute("(if (< age 18) 100 200)", global_env);
+        execute("(if (<= score 80) 1 0)", global_env);
+        
+        execute("(if (!= score 100) 1 0)", global_env);
 
     }
     catch(const exception e){

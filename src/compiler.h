@@ -20,7 +20,9 @@ enum class OpCode{
     GREATER_EQ,
     NOT_EQ,
     JUMP,
-    JUMP_IF_FALSE
+    JUMP_IF_FALSE,
+    CALL,
+    RETURN
 };
 
 struct  Instruction{
