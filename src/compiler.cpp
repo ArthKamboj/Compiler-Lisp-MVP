@@ -69,6 +69,9 @@ void Compiler::compile(const LispVal& ast){
             else if (op == "=") bytecode.push_back(Instruction(OpCode::EQ));
             else if (op == "<") bytecode.push_back(Instruction(OpCode::LESS_THAN));
             else if (op == ">") bytecode.push_back(Instruction(OpCode::GREATER_THAN));
+            else if (op == "<=") bytecode.push_back(Instruction(OpCode::LESS_EQ));
+            else if (op == ">=") bytecode.push_back(Instruction(OpCode::GREATER_EQ));
+            else if (op == "!=") bytecode.push_back(Instruction(OpCode::NOT_EQ));
             else throw runtime_error("Unknown operator: " + op);
         }
 

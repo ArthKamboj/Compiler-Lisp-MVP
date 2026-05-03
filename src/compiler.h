@@ -16,6 +16,9 @@ enum class OpCode{
     EQ,
     LESS_THAN,
     GREATER_THAN,
+    LESS_EQ,
+    GREATER_EQ,
+    NOT_EQ,
     JUMP,
     JUMP_IF_FALSE
 };

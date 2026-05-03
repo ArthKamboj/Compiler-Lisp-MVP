@@ -89,6 +89,24 @@ LispVal vm::run(const vector<Instruction>& bytecode) {
             push(LispVal(a > b));
             break;
         }
+        case OpCode::LESS_EQ: {
+            double b = get_num(pop());
+            double a = get_num(pop());
+            push(LispVal(a <= b));
+            break;
+        }
+        case OpCode::GREATER_EQ: {
+            double b = get_num(pop());
+            double a = get_num(pop());
+            push(LispVal(a >= b));
+            break;
+        }
+        case OpCode::NOT_EQ: {
+            double b = get_num(pop());
+            double a = get_num(pop());
+            push(LispVal(a != b));
+            break;
+        }
         case OpCode::JUMP_IF_FALSE: {
             LispVal condition = pop();
             if (std::holds_alternative<bool>(condition.value) && !std::get<bool>(condition.value)) {
