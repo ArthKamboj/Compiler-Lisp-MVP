@@ -19,13 +19,14 @@ struct LispFunction {
 };
 
 struct LispVal {
-    variant<double, bool, string, LispList> value;
+    variant<double, bool, string, LispList, LispFunction> value;
 
     LispVal(double n) : value(n) {}
     LispVal(bool b) : value(b) {}
     LispVal(string s) : value(s) {}
     LispVal(LispList l) : value(l) {}
     LispVal(const char* s) : value(string(s)) {} 
+    LispVal(LispFunction f) : value(f) {}
 };
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
@@ -37,6 +38,7 @@ inline void print_lisp_val(const LispVal& val){
         [](double n){ cout << n; },
         [](bool b){ cout << (b?"#t":"#f"); },
         [](const string& s){ cout << s; },
+        [](const LispFunction& f){ cout << "<function arity " << f.params.size() << ">"; }, 
         [](const LispList& l){
             cout << "(";
             for(size_t i=0; i<l.size(); ++i){

@@ -14,6 +14,9 @@ void Compiler::compile(const LispVal& ast){
         [this](bool b) {
             bytecode.push_back(Instruction(OpCode::CONST, LispVal(b)));
         },
+        [this](const LispFunction& f) { 
+            bytecode.push_back(Instruction(OpCode::CONST, LispVal(f)));
+        },
         [this](const string& s) {
             bytecode.push_back(Instruction(OpCode::GET_GLOBAL, LispVal(s)));
         },
@@ -58,6 +61,35 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "lambda") {
+                if(l.size() !=3) throw runtime_error("lambda requires parameters and body");
+
+                vector<string> params;
+                LispList param_list = get<LispList>(l[1].value);
+                for(const auto& p : param_list) {
+                    params.push_back(get<string>(p.value));
+                }
+
+                size_t jump_idx = bytecode.size();
+                bytecode.push_back(Instruction(OpCode::JUMP, LispVal(0.0)));
+                size_t func_ip = bytecode.size();
+
+                compile(l[2]);
+
+                bytecode.push_back(Instruction(OpCode::RETURN));
+                double jump_offset = static_cast<double>(bytecode.size() - jump_idx -1);
+                bytecode[jump_idx].operand = LispVal(jump_offset);
+
+                LispFunction func;
+                func.params = params;
+                func.ip = func_ip;
+                func.env = nullptr;
+
+                bytecode.push_back(Instruction(OpCode::CONST, LispVal(func)));
+
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }
@@ -72,7 +104,10 @@ void Compiler::compile(const LispVal& ast){
             else if (op == "<=") bytecode.push_back(Instruction(OpCode::LESS_EQ));
             else if (op == ">=") bytecode.push_back(Instruction(OpCode::GREATER_EQ));
             else if (op == "!=") bytecode.push_back(Instruction(OpCode::NOT_EQ));
-            else throw runtime_error("Unknown operator: " + op);
+            else {
+                compile(l[0]); 
+                bytecode.push_back(Instruction(OpCode::CALL));
+            }
         }
 
     }, ast.value);
