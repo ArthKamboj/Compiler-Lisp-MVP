@@ -15,7 +15,7 @@
 using namespace std;
 
 
-void execute(const string& code, shared_ptr<Environment> env) {
+void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler, vm& vima) {
 
     cout << "Executing: " << code << endl;
 
@@ -23,11 +23,12 @@ void execute(const string& code, shared_ptr<Environment> env) {
     list<string> tokens(token_vc.begin(), token_vc.end());
     LispVal ast = parse(tokens);
 
-    Compiler compiler;
+    size_t start_ip = compiler.bytecode.size();
+
     compiler.compile(ast);
 
     vm virmac(env);
-    LispVal result = virmac.run(compiler.bytecode);
+    LispVal result = virmac.run(compiler.bytecode, start_ip);
 
     cout << "----RESULT----" << "\n";
     print_lisp_val(result);
@@ -44,11 +45,14 @@ int main() {
 
         auto global_env = make_shared<Environment>();
 
-        execute("(define square (lambda (x) (* x x)))", global_env);
+        Compiler master_compiler;
+        vm master_vm(global_env);
+
+        execute("(define square (lambda (x) (* x x)))", global_env, master_compiler, master_vm);
         
-        execute("(square 10)", global_env);
+        execute("(square 10)", global_env, master_compiler, master_vm);
         
-        execute("(+ (square 3) (square 4))", global_env);
+        execute("(+ (square 3) (square 4))", global_env, master_compiler, master_vm);
     }
     catch(const exception e){
 

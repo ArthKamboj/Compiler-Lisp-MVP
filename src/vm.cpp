@@ -23,9 +23,9 @@ double get_num(const LispVal& v) {
     throw runtime_error("Type Error: Expected a number");
 }
 
-LispVal vm::run(const vector<Instruction>& bytecode) {
+LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
 
-    for(size_t ip=0; ip<bytecode.size(); ++ip){
+    for(size_t ip=start_ip; ip<bytecode.size(); ++ip){
         const Instruction& inst = bytecode[ip];
 
         switch (inst.op)

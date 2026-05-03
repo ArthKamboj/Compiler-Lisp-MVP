@@ -24,5 +24,5 @@ class vm
 
     public:
         vm(shared_ptr<Environment> environment) : env(environment) {};
-        LispVal run(const vector<Instruction>& bytecode);
+        LispVal run(const vector<Instruction>& bytecode, size_t start_ip=0);
 };
