@@ -44,14 +44,11 @@ int main() {
 
         auto global_env = make_shared<Environment>();
 
-        execute("(define score 85)", global_env);
+        execute("(define square (lambda (x) (* x x)))", global_env);
         
-        execute("(if (>= score 85) 1 0)", global_env);
+        execute("(square 10)", global_env);
         
-        execute("(if (<= score 80) 1 0)", global_env);
-        
-        execute("(if (!= score 100) 1 0)", global_env);
-
+        execute("(+ (square 3) (square 4))", global_env);
     }
     catch(const exception e){
 

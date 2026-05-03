@@ -109,8 +109,7 @@ LispVal vm::run(const vector<Instruction>& bytecode) {
         }
         case OpCode::JUMP_IF_FALSE: {
             LispVal condition = pop();
-            if (std::holds_alternative<bool>(condition.value) && !std::get<bool>(condition.value)) {
-                // Read the offset and jump the instruction pointer forward
+            if (holds_alternative<bool>(condition.value) && !get<bool>(condition.value)) {
                 double offset = get<double>(inst.operand.value);
                 ip += static_cast<size_t>(offset); 
             }
@@ -121,7 +120,36 @@ LispVal vm::run(const vector<Instruction>& bytecode) {
             ip += static_cast<size_t>(offset);
             break;
         }
+        case OpCode::CALL: {
+            LispVal func_val = pop();
+            if (!holds_alternative<LispFunction>(func_val.value)) {
+                throw runtime_error("Attempted to call a non-function");
+            }
+            LispFunction func = get<LispFunction>(func_val.value);
+            auto local_env = make_shared<Environment>(env);
+
+            for (int i = static_cast<int>(func.params.size()) - 1; i >= 0; --i) {
+                local_env->set(func.params[i], pop());
+            }
+            call_stack.push_back({ip, env});
+
+            ip = func.ip - 1; 
+            env = local_env;
+            break;
+        }
         
+        case OpCode::RETURN: {
+            LispVal result = pop();
+
+            if (call_stack.empty()) throw runtime_error("Call stack underflow!");
+            CallFrame frame = call_stack.back();
+            call_stack.pop_back();
+
+            ip = frame.return_ip;
+            env = frame.return_env;
+            push(result);
+            break;
+        }
         default:
             break;
         }

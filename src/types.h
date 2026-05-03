@@ -38,7 +38,7 @@ inline void print_lisp_val(const LispVal& val){
         [](double n){ cout << n; },
         [](bool b){ cout << (b?"#t":"#f"); },
         [](const string& s){ cout << s; },
-        [](const LispFunction& f){ cout << "<function arity " << f.params.size() << ">"; }, 
+        [](const LispFunction& f){ cout << "<function arity " << f.params.size() << ">"; },
         [](const LispList& l){
             cout << "(";
             for(size_t i=0; i<l.size(); ++i){

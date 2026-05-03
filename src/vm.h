@@ -7,10 +7,16 @@
 
 using namespace std;
 
+struct CallFrame {
+    size_t return_ip;
+    shared_ptr<Environment> return_env;
+};
+
 class vm
 {
     private:
         vector<LispVal> stack;
+        vector<CallFrame> call_stack;
         shared_ptr<Environment> env;
 
         void push(const LispVal& val);
