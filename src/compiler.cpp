@@ -34,6 +34,30 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "if") {
+
+                if(l.size()!=4) throw runtime_error("if requires 3 args: condition, true branch, false branch");
+                
+                compile(l[1]);
+
+                size_t jump_if_false_index = bytecode.size();
+                bytecode.push_back(Instruction(OpCode::JUMP_IF_FALSE, LispVal(0.0)));
+
+                compile(l[2]);
+
+                size_t jump_index = bytecode.size();
+                bytecode.push_back(Instruction(OpCode::JUMP, LispVal(0.0)));
+                double false_jump_offest = static_cast<double>(bytecode.size() - jump_if_false_index -1);
+                bytecode[jump_if_false_index].operand = LispVal(false_jump_offest);
+
+                compile(l[3]);
+
+                double jump_offset = static_cast<double>(bytecode.size() - jump_index - 1);
+                bytecode[jump_index].operand = LispVal(jump_offset);
+
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }

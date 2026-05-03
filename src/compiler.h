@@ -15,7 +15,9 @@ enum class OpCode{
     SET_GLOBAL,
     EQ,
     LESS_THAN,
-    GREATER_THAN
+    GREATER_THAN,
+    JUMP,
+    JUMP_IF_FALSE
 };
 
 struct  Instruction{
