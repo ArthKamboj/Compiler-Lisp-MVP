@@ -89,6 +89,20 @@ LispVal vm::run(const vector<Instruction>& bytecode) {
             push(LispVal(a > b));
             break;
         }
+        case OpCode::JUMP_IF_FALSE: {
+            LispVal condition = pop();
+            if (std::holds_alternative<bool>(condition.value) && !std::get<bool>(condition.value)) {
+                // Read the offset and jump the instruction pointer forward
+                double offset = get<double>(inst.operand.value);
+                ip += static_cast<size_t>(offset); 
+            }
+            break;
+        }
+        case OpCode::JUMP: {
+            double offset = get<double>(inst.operand.value);
+            ip += static_cast<size_t>(offset);
+            break;
+        }
         
         default:
             break;

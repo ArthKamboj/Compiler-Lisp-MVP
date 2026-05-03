@@ -44,10 +44,11 @@ int main() {
 
         auto global_env = make_shared<Environment>();
 
-        execute("(= 10 10)", global_env);
-        execute("(< 5 10)", global_env);
-        execute("(> 5 10)", global_env);
-        execute("(< (+ 2 2) 5)", global_env);
+        execute("(define age 20)", global_env);
+        
+        execute("(if (> age 18) 100 200)", global_env);
+        
+        execute("(if (< age 18) 100 200)", global_env);
 
     }
     catch(const exception e){
