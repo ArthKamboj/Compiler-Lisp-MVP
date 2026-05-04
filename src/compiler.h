@@ -22,7 +22,11 @@ enum class OpCode{
     JUMP,
     JUMP_IF_FALSE,
     CALL,
-    RETURN
+    RETURN,
+    PRINT,
+    READ,
+    POP_STACK,
+    JUP_BACK
 };
 
 struct  Instruction{

@@ -137,7 +137,6 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             env = local_env;
             break;
         }
-        
         case OpCode::RETURN: {
             LispVal result = pop();
 
@@ -150,6 +149,15 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(result);
             break;
         }
+        case OpCode::PRINT: {
+            LispVal val = pop();
+
+            print_lisp_val(val);
+            cout << endl;
+            push(val);
+            break;
+        }
+
         default:
             break;
         }

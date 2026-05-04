@@ -90,6 +90,13 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "print") {
+                if(l.size() != 2) throw runtime_error("print requires 1 argument");
+                compile(l[1]);
+                bytecode.push_back(Instruction(OpCode::PRINT));
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }
