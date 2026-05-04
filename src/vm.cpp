@@ -157,6 +157,12 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(val);
             break;
         }
+        case OpCode::READ: {
+            double input;
+            cin >> input;
+            push(LispVal(input));
+            break;
+        }
 
         default:
             break;

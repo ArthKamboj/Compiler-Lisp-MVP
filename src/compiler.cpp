@@ -92,8 +92,17 @@ void Compiler::compile(const LispVal& ast){
 
             if(op == "print") {
                 if(l.size() != 2) throw runtime_error("print requires 1 argument");
+
                 compile(l[1]);
+                
                 bytecode.push_back(Instruction(OpCode::PRINT));
+                return;
+            }
+
+            if(op == "read") {
+                if(l.size() != 2) throw runtime_error("read requires 1 agrument");
+
+                bytecode.push_back(Instruction(OpCode::READ));
                 return;
             }
 
