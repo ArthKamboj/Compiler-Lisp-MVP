@@ -158,9 +158,36 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             break;
         }
         case OpCode::READ: {
-            double input;
-            cin >> input;
-            push(LispVal(input));
+            string input_str;
+            cin >> input_str;
+
+            if(input_str == "#t") {
+                push(LispVal(true));
+            }
+            else if(input_str == "#f") {
+                push(LispVal(false));
+            }
+            else {
+                try{
+                    size_t chars_processed;
+                    double val = stod(input_str, &chars_processed);
+
+                    if(chars_processed == input_str.length()) {
+                        push(LispVal(val));
+                    }
+                    else {
+                        push(LispVal(input_str));
+                    }
+                }
+                catch(const invalid_argument) {
+                    push(LispVal(input_str));
+                }
+
+            }
+            break;
+        }
+        case OpCode::POP_STACK: {
+            pop();
             break;
         }
 
