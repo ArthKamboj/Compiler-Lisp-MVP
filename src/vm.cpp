@@ -190,6 +190,11 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             pop();
             break;
         }
+        case OpCode::JUMP_BACK: {
+            double offset = get<double>(inst.operand.value);
+            ip -= static_cast<size_t>(offset);
+            break;
+        }
 
         default:
             break;

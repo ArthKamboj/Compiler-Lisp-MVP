@@ -26,7 +26,7 @@ enum class OpCode{
     PRINT,
     READ,
     POP_STACK,
-    JUP_BACK
+    JUMP_BACK
 };
 
 struct  Instruction{

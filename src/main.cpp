@@ -48,11 +48,23 @@ int main() {
         Compiler master_compiler;
         vm master_vm(global_env);
 
-        execute("(define square (lambda (x) (* x x)))", global_env, master_compiler, master_vm);
-        
-        execute("(square 10)", global_env, master_compiler, master_vm);
-        
-        execute("(+ (square 3) (square 4))", global_env, master_compiler, master_vm);
+        string game_script = R"(
+            (define secret 42)
+            (define guess 0)
+            
+            (while (!= guess secret)
+                (print "Enter your guess:")
+                (define guess (read))
+                
+                (if (< guess secret)
+                    (print "Too low!")
+                    (if (> guess secret)
+                        (print "Too high!")
+                        (print "You got it!")))
+            )
+        )";
+
+        execute(game_script, global_env, master_compiler, master_vm);
     }
     catch(const exception e){
 

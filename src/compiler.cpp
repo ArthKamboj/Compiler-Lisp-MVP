@@ -90,6 +90,35 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "while") {
+                if(l.size() < 3) throw runtime_error("while requires a condition and a body");
+
+                size_t loop_start_idx = bytecode.size();
+
+                compile(l[1]);
+
+                size_t exit_jump_idx = bytecode.size();
+                bytecode.push_back(Instruction(OpCode::JUMP_IF_FALSE, LispVal(0.0)));
+
+                for (size_t i=2; i<l.size(); i++) {
+                    compile(l[1]);
+                    if(i < l.size()-1){
+                        bytecode.push_back(Instruction(OpCode::POP_STACK));
+                    }
+                }
+
+                bytecode.push_back(Instruction(OpCode::POP_STACK));
+
+                double back_offset = static_cast<double>(bytecode.size() - loop_start_idx + 1);
+                bytecode.push_back(Instruction(OpCode::JUMP_BACK, LispVal(back_offset)));
+
+                double exit_offset = static_cast<double>(bytecode.size() - exit_jump_idx - 1);
+                bytecode[exit_jump_idx].operand = LispVal(exit_offset);
+
+                bytecode.push_back(Instruction(OpCode::CONST, LispVal(false)));
+                return;
+            }
+
             if(op == "print") {
                 if(l.size() != 2) throw runtime_error("print requires 1 argument");
 
