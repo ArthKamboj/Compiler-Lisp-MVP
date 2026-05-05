@@ -27,7 +27,6 @@ void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler
     while(!tokens.empty()) {
         LispVal ast = LispVal(false);
         
-        // 1. Test the Parser
         try { 
             ast = parse(tokens); 
         } catch (const exception& e) { 
@@ -36,14 +35,12 @@ void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler
         
         size_t start_ip = compiler.bytecode.size();
         
-        // 2. Test the Compiler
         try { 
             compiler.compile(ast); 
         } catch (const exception& e) { 
             cerr << "\n[COMPILER CRASH] " << e.what() << endl; return; 
         }
         
-        // 3. Test the VM
         try { 
             last_result = vima.run(compiler.bytecode, start_ip); 
         } catch (const exception& e) { 

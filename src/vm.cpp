@@ -164,7 +164,7 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
         case OpCode::READ: {
             string input_str;
             if (!(std::cin >> input_str)) {
-                std::cin.clear(); // Clear the error state
+                std::cin.clear();
                 throw std::runtime_error("VM FATAL ERROR: Input stream crashed.");
             }
 

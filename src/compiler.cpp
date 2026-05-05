@@ -19,11 +19,9 @@ void Compiler::compile(const LispVal& ast){
         },
         [this](const string& s) {
             if (s.length() >= 2 && s.front() == '"' && s.back() == '"') {
-                // It's literal text! Strip the quotes and push as a constant
                 std::string literal_text = s.substr(1, s.length() - 2);
                 bytecode.push_back(Instruction(OpCode::CONST, LispVal(literal_text)));
             } else {
-                // It's a normal variable lookup
                 bytecode.push_back(Instruction(OpCode::GET_GLOBAL, LispVal(s)));
             }
         },
