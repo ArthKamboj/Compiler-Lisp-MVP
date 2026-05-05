@@ -18,7 +18,14 @@ void Compiler::compile(const LispVal& ast){
             bytecode.push_back(Instruction(OpCode::CONST, LispVal(f)));
         },
         [this](const string& s) {
-            bytecode.push_back(Instruction(OpCode::GET_GLOBAL, LispVal(s)));
+            if (s.length() >= 2 && s.front() == '"' && s.back() == '"') {
+                // It's literal text! Strip the quotes and push as a constant
+                std::string literal_text = s.substr(1, s.length() - 2);
+                bytecode.push_back(Instruction(OpCode::CONST, LispVal(literal_text)));
+            } else {
+                // It's a normal variable lookup
+                bytecode.push_back(Instruction(OpCode::GET_GLOBAL, LispVal(s)));
+            }
         },
         [this](const LispList& l) {
             if (l.empty()) return;
@@ -101,7 +108,7 @@ void Compiler::compile(const LispVal& ast){
                 bytecode.push_back(Instruction(OpCode::JUMP_IF_FALSE, LispVal(0.0)));
 
                 for (size_t i=2; i<l.size(); i++) {
-                    compile(l[1]);
+                    compile(l[i]);
                     if(i < l.size()-1){
                         bytecode.push_back(Instruction(OpCode::POP_STACK));
                     }
@@ -129,7 +136,7 @@ void Compiler::compile(const LispVal& ast){
             }
 
             if(op == "read") {
-                if(l.size() != 2) throw runtime_error("read requires 1 agrument");
+                if(l.size() != 1) throw runtime_error("read requires no argument");
 
                 bytecode.push_back(Instruction(OpCode::READ));
                 return;

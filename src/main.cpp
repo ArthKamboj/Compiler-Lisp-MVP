@@ -17,21 +17,42 @@ using namespace std;
 
 void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler, vm& vima) {
 
-    cout << "Executing: " << code << endl;
+    cout << "Executing Script: " << code << endl;
 
     vector<string> token_vc = tokenize(code);
     list<string> tokens(token_vc.begin(), token_vc.end());
-    LispVal ast = parse(tokens);
 
-    size_t start_ip = compiler.bytecode.size();
+    LispVal last_result = LispVal(false);
 
-    compiler.compile(ast);
-
-    vm virmac(env);
-    LispVal result = virmac.run(compiler.bytecode, start_ip);
-
+    while(!tokens.empty()) {
+        LispVal ast = LispVal(false);
+        
+        // 1. Test the Parser
+        try { 
+            ast = parse(tokens); 
+        } catch (const exception& e) { 
+            cerr << "\n[PARSER CRASH] " << e.what() << endl; return; 
+        }
+        
+        size_t start_ip = compiler.bytecode.size();
+        
+        // 2. Test the Compiler
+        try { 
+            compiler.compile(ast); 
+        } catch (const exception& e) { 
+            cerr << "\n[COMPILER CRASH] " << e.what() << endl; return; 
+        }
+        
+        // 3. Test the VM
+        try { 
+            last_result = vima.run(compiler.bytecode, start_ip); 
+        } catch (const exception& e) { 
+            cerr << "\n[VM CRASH] " << e.what() << endl; return; 
+        }
+    }
+    
     cout << "----RESULT----" << "\n";
-    print_lisp_val(result);
+    print_lisp_val(last_result);
     cout << "\n--------------\n";
 }
 
@@ -53,14 +74,14 @@ int main() {
             (define guess 0)
             
             (while (!= guess secret)
-                (print "Enter your guess:")
+                (print "Enter_your_guess:")
                 (define guess (read))
                 
                 (if (< guess secret)
-                    (print "Too low!")
+                    (print "Too_low!")
                     (if (> guess secret)
-                        (print "Too high!")
-                        (print "You got it!")))
+                        (print "Too_high!")
+                        (print "You_got_it!")))
             )
         )";
 

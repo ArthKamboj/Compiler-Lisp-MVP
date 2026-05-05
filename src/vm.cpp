@@ -26,9 +26,13 @@ double get_num(const LispVal& v) {
 LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
 
     for(size_t ip=start_ip; ip<bytecode.size(); ++ip){
+
+        // cout << "[VM TRACE] IP: " << ip << " | Opcode: " << static_cast<int>(bytecode[ip].op) << endl;
+
         const Instruction& inst = bytecode[ip];
 
-        switch (inst.op)
+        try {
+            switch (inst.op)
         {
         case OpCode::CONST:
             push(inst.operand);
@@ -159,7 +163,10 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
         }
         case OpCode::READ: {
             string input_str;
-            cin >> input_str;
+            if (!(std::cin >> input_str)) {
+                std::cin.clear(); // Clear the error state
+                throw std::runtime_error("VM FATAL ERROR: Input stream crashed.");
+            }
 
             if(input_str == "#t") {
                 push(LispVal(true));
@@ -198,6 +205,13 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
 
         default:
             break;
+        }
+        }
+        catch(const exception& e) {
+            std::cerr << "\nFATAL EXCEPTION at IP: " << ip 
+                      << " | Opcode ID: " << static_cast<int>(inst.op) 
+                      << " | " << e.what() << std::endl;
+            throw; // Stop execution
         }
     }
 
