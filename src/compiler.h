@@ -26,7 +26,12 @@ enum class OpCode{
     PRINT,
     READ,
     POP_STACK,
-    JUMP_BACK
+    JUMP_BACK,
+
+    //std lib opcodes
+    SQRT,
+    MOD,
+    RAND
 };
 
 struct  Instruction{

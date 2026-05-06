@@ -1,5 +1,6 @@
 #include "vm.h"
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
@@ -202,6 +203,11 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             ip -= static_cast<size_t>(offset);
             break;
         }
+        case OpCode::SQRT: {
+            LispVal val = pop();
+            if(!holds_alternative<double>(val.value)) throw runtime_error("sqrt requires a number");
+            push(LispVal(sqrt(get<double>(val.value))));
+        }
 
         default:
             break;
@@ -211,7 +217,7 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             std::cerr << "\nFATAL EXCEPTION at IP: " << ip 
                       << " | Opcode ID: " << static_cast<int>(inst.op) 
                       << " | " << e.what() << std::endl;
-            throw; // Stop execution
+            throw;
         }
     }
 
