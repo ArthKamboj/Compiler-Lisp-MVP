@@ -4,6 +4,8 @@
 #include <list>
 #include <exception>
 #include <memory>
+#include <fstream>
+#include <sstream>
 
 #include "lexer.h"
 #include "parser.h"
@@ -53,40 +55,56 @@ void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler
     cout << "\n--------------\n";
 }
 
+void run_file(const string& filename, shared_ptr<Environment> env, Compiler& compiler, vm& virmac) {
 
-
-int main() {
-
-    try{
-
-        cout << "----Micro-Lisp Compiler and VM----" << "\n\n";
-
-        auto global_env = make_shared<Environment>();
-
-        Compiler master_compiler;
-        vm master_vm(global_env);
-
-        string game_script = R"(
-            (define secret 42)
-            (define guess 0)
-            
-            (while (!= guess secret)
-                (print "Enter_your_guess:")
-                (define guess (read))
-                
-                (if (< guess secret)
-                    (print "Too_low!")
-                    (if (> guess secret)
-                        (print "Too_high!")
-                        (print "You_got_it!")))
-            )
-        )";
-
-        execute(game_script, global_env, master_compiler, master_vm);
+    ifstream file(filename);
+    if(!file.is_open()) {
+        cerr << "Error: Could not open file '" << filename << "'" << endl;
+        return;
     }
-    catch(const exception e){
 
-        cerr << "Compilation Error: " << e.what() << endl;
+    stringstream buffer;
+    buffer << file.rdbuf();
+    string code = buffer.str();
+
+    execute(code, env, compiler, virmac);
+}
+
+void run_repl(shared_ptr<Environment> env, Compiler& compiler, vm& virmac) {
+    cout << "Micro-Lisp Interactive Prompt (Type 'exit' to quit)\n";
+    string input;
+
+    while (true) {
+        cout << ">> ";
+        getline(cin, input);
+
+        if (input == "exit" || input == "quit") break;
+        if (input.empty()) continue;
+
+        try {
+            execute(input, env, compiler, virmac);
+        }
+        catch (const exception& e) {
+            cerr << "Error: " << e.what() << endl;
+        }
+
+    }
+}
+
+
+int main(int argc, char* argv[]) {
+
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    auto global_env = make_shared<Environment>();
+    Compiler master_compiler;
+    vm master_vm(global_env);
+
+    if(argc > 1) {
+        run_file(argv[1], global_env, master_compiler, master_vm);
+    }
+    else {
+        run_repl(global_env, master_compiler, master_vm);
     }
 
     return 0;

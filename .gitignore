@@ -1,5 +1,6 @@
 # Ignore executables
 *.exe
+*.lisp
 
 # Ignore object files
 *.o
