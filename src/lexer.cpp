@@ -13,9 +13,17 @@ vector<string> tokenize(const string& code) {
     vector<string> tokens;
     string current_token = "";
     bool in_string = false;
+    bool in_comment = false;
 
     for (size_t i = 0; i < code.length(); ++i) {
         char c = code[i];
+
+        if(in_comment) {
+            if(c == '\n') {
+                in_comment = false;
+            }
+            continue;
+        }
 
         if (in_string) {
             current_token += c;
@@ -26,7 +34,14 @@ vector<string> tokenize(const string& code) {
             }
         } 
         else {
-            if (c == '"') {
+            if(c == ';') {
+                if(!current_token.empty()) {
+                    tokens.push_back(current_token);
+                    current_token = "";
+                }
+                in_comment = true;
+            }
+            else if (c == '"') {
                 if (!current_token.empty()) {
                     tokens.push_back(current_token);
                     current_token = "";
