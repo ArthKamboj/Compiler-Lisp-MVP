@@ -221,6 +221,11 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(LispVal(fmod(a,b)));
             break;
         }
+        case OpCode::RAND: {
+            double r = static_cast<double>(rand())/RAND_MAX;
+            push(LispVal(r));
+            break;
+        }
 
         default:
             break;

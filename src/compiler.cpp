@@ -157,6 +157,12 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "rand") {
+                if(l.size() != 1) throw runtime_error("rand takes no arguments");
+                bytecode.push_back(Instruction(OpCode::RAND));
+                return; 
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }
