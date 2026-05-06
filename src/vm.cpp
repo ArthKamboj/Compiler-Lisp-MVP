@@ -1,6 +1,7 @@
 #include "vm.h"
 #include <stdexcept>
 #include <cmath>
+#include <cstdlib>
 
 using namespace std;
 
@@ -207,6 +208,18 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             LispVal val = pop();
             if(!holds_alternative<double>(val.value)) throw runtime_error("sqrt requires a number");
             push(LispVal(sqrt(get<double>(val.value))));
+            break;
+        }
+        case OpCode::MOD: {
+            LispVal b_val = pop();
+            LispVal a_val = pop();
+            if(!holds_alternative<double>(a_val.value) || !holds_alternative<double>(b_val.value)){
+                throw runtime_error("mod requires two numbers");
+            }
+            double a = get<double>(a_val.value);
+            double b = get<double>(b_val.value);
+            push(LispVal(fmod(a,b)));
+            break;
         }
 
         default:

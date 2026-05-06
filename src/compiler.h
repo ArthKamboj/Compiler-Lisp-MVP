@@ -30,8 +30,7 @@ enum class OpCode{
 
     //std lib opcodes
     SQRT,
-    MOD,
-    RAND
+    MOD
 };
 
 struct  Instruction{

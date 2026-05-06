@@ -141,10 +141,19 @@ void Compiler::compile(const LispVal& ast){
             }
 
             //std lib
+
             if(op == "sqrt") {
                 if(l.size() != 2) throw runtime_error("sqrt requires 1 argument");
                 compile(l[1]);
                 bytecode.push_back(Instruction(OpCode::SQRT));
+                return;
+            }
+
+            if(op == "%") {
+                if(l.size() != 3) throw runtime_error("mod requires 2 arguments");
+                compile(l[1]);
+                compile(l[2]);
+                bytecode.push_back(Instruction(OpCode::MOD));
                 return;
             }
 
