@@ -16,6 +16,8 @@ It supports interactive execution via a REPL (Read-Eval-Print Loop) and batch ex
 
 * **Math & Logic:** +, -, *, /, =, <, >, <=, >=, !=
 
+* **Comments:** Semi-colon `;` marks the start of a comment that goes till EOL   
+
 * **Control Flow:** (if condition true-branch false-branch) and (while condition body)
 
 * **Functions:** First-class, user-defined functions via (lambda (params) body)
