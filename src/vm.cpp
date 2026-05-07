@@ -245,6 +245,27 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(LispVal(res));
             break;
         }
+        case OpCode::SUBSTR: {
+            LispVal len_val = pop();
+            LispVal start_val = pop();
+            LispVal str_val = pop();
+            if(!holds_alternative<double>(len_val.value) ||
+               !holds_alternative<double>(start_val.value) ||
+               !holds_alternative<string>(str_val.value)) {
+                throw runtime_error("substring requires (tring, start, length)");
+            }
+            string str = get<string>(str_val.value);
+            size_t start = static_cast<size_t>(get<double>(start_val.value));
+            size_t len = static_cast<size_t>(get<double>(len_val.value));
+
+            if(start >= str.length()) {
+                push(LispVal(string("")));
+            }
+            else {
+                push(LispVal(str.substr(start, len)));
+            }
+            break;
+        }
 
         default:
             break;

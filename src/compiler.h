@@ -36,6 +36,7 @@ enum class OpCode{
     //string
     CONCAT,
     STR_LEN,
+    SUBSTR
 };
 
 struct  Instruction{

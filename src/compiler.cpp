@@ -164,18 +164,27 @@ void Compiler::compile(const LispVal& ast){
             }
 
             //string functions
-            if(op == "string-length"){
+            if(op == "string-length") {
                 if (l.size() != 2) throw runtime_error("string-length requires 1 argument");
                 compile(l[1]);
                 bytecode.push_back(Instruction(OpCode::STR_LEN));
                 return;
             }
 
-            if(op == "concat"){
+            if(op == "concat") {
                 if(l.size() !=3) throw runtime_error("concat requires 2 arguments");
                 compile(l[1]);
                 compile(l[2]);
                 bytecode.push_back(Instruction(OpCode::CONCAT));
+                return;
+            }
+
+            if(op == "substring") {
+                if(l.size() != 4) throw runtime_error("substring requires 3 arguments: string, start_index, length");
+                compile(l[1]);
+                compile(l[2]);
+                compile(l[3]);
+                bytecode.push_back(Instruction(OpCode::SUBSTR));
                 return;
             }
 
