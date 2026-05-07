@@ -285,6 +285,12 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push((*vec)[0]);
             return;
         }
+        case OpCode::IS_EMPTY: {
+            LispVal val = pop();
+            auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
+            push(LispVal(vec->empty()));
+            return;
+        }
 
         default:
             break;
