@@ -39,7 +39,8 @@ enum class OpCode{
     SUBSTR,
 
     //list
-    MAKE_LIST
+    MAKE_LIST,
+    CAR
 
 };
 

@@ -278,6 +278,13 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
                 break;
             }
         }
+        case OpCode::CAR: {
+            LispVal val = pop();
+            auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
+            if(vec->empty()) throw runtime_error("car called on first item");
+            push((*vec)[0]);
+            return;
+        }
 
         default:
             break;
