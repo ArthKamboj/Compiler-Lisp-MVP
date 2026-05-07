@@ -171,6 +171,14 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "concat"){
+                if(l.size() !=3) throw runtime_error("concat requires 2 arguments");
+                compile(l[1]);
+                compile(l[2]);
+                bytecode.push_back(Instruction(OpCode::CONCAT));
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }

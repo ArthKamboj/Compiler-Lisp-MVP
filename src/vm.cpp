@@ -228,11 +228,21 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
         }
         case OpCode::STR_LEN: {
             LispVal val = pop();
-            if (!std::holds_alternative<std::string>(val.value)) {
-                throw std::runtime_error("string-length requires a string");
+            if (!holds_alternative<string>(val.value)) {
+                throw runtime_error("string-length requires a string");
             }
-            double len = static_cast<double>(std::get<std::string>(val.value).length());
+            double len = static_cast<double>(get<string>(val.value).length());
             push(LispVal(len));
+            break;
+        }
+        case OpCode::CONCAT: {
+            LispVal b_val = pop();
+            LispVal a_val = pop();
+            if(!holds_alternative<string>(a_val.value) || !holds_alternative<string>(b_val.value)) {
+                throw runtime_error("concat requires 2 strings");
+            }
+            string res = get<string>(a_val.value) + get<string>(b_val.value);
+            push(LispVal(res));
             break;
         }
 

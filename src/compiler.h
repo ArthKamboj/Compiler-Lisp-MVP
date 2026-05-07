@@ -34,6 +34,7 @@ enum class OpCode{
     RAND,
 
     //string
+    CONCAT,
     STR_LEN,
 };
 
