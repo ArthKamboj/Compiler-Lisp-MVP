@@ -163,6 +163,14 @@ void Compiler::compile(const LispVal& ast){
                 return; 
             }
 
+            //string functions
+            if(op == "string-length"){
+                if (l.size() != 2) throw runtime_error("string-length requires 1 argument");
+                compile(l[1]);
+                bytecode.push_back(Instruction(OpCode::STR_LEN));
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }

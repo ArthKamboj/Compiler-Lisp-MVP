@@ -226,6 +226,15 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(LispVal(r));
             break;
         }
+        case OpCode::STR_LEN: {
+            LispVal val = pop();
+            if (!std::holds_alternative<std::string>(val.value)) {
+                throw std::runtime_error("string-length requires a string");
+            }
+            double len = static_cast<double>(std::get<std::string>(val.value).length());
+            push(LispVal(len));
+            break;
+        }
 
         default:
             break;
