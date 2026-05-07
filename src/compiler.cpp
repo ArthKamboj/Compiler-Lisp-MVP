@@ -188,6 +188,16 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            //list
+            if(op == "list") {
+                for(size_t i=1; i<l.size(); ++i) {
+                    compile(l[i]);
+                }
+                double num_args = static_cast<double>(l.size()-1);
+                bytecode.push_back(Instruction(OpCode::MAKE_LIST, LispVal(num_args)));
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }

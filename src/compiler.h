@@ -36,7 +36,11 @@ enum class OpCode{
     //string
     CONCAT,
     STR_LEN,
-    SUBSTR
+    SUBSTR,
+
+    //list
+    MAKE_LIST
+
 };
 
 struct  Instruction{

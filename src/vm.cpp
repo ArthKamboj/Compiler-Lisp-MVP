@@ -226,6 +226,7 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(LispVal(r));
             break;
         }
+        //string
         case OpCode::STR_LEN: {
             LispVal val = pop();
             if (!holds_alternative<string>(val.value)) {
@@ -265,6 +266,17 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
                 push(LispVal(str.substr(start, len)));
             }
             break;
+        }
+        //list
+        case OpCode::MAKE_LIST: {
+            int num_args = static_cast<int>(get<double>(inst.operand.value));
+            auto new_list = make_shared<vector<LispVal>>(num_args);
+
+            for (int i=num_args-1; i>=0; --i) {
+                (*new_list)[i] = pop();
+                push(LispVal(new_list));
+                break;
+            }
         }
 
         default:

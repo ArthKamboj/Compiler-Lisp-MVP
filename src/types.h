@@ -19,14 +19,16 @@ struct LispFunction {
 };
 
 struct LispVal {
-    variant<double, bool, string, LispList, LispFunction> value;
+    variant<double, bool, string, LispList, LispFunction, shared_ptr<vector<LispVal>>> value;
 
+    LispVal() : value(false) {}
     LispVal(double n) : value(n) {}
     LispVal(bool b) : value(b) {}
     LispVal(string s) : value(s) {}
     LispVal(LispList l) : value(l) {}
     LispVal(const char* s) : value(string(s)) {} 
     LispVal(LispFunction f) : value(f) {}
+    LispVal(shared_ptr<vector<LispVal>> ptr) : value(ptr) {}
 };
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
@@ -46,6 +48,14 @@ inline void print_lisp_val(const LispVal& val){
                 if(i<l.size()-1) cout << " ";
             }
             cout << ")";
+        },
+        [](const std::shared_ptr<std::vector<LispVal>>& vec) {
+            std::cout << "(";
+            for (size_t i = 0; i < vec->size(); ++i) {
+                print_lisp_val((*vec)[i]);
+                if (i < vec->size() - 1) std::cout << " ";
+            }
+            std::cout << ")";
         }
     }, val.value);
     
