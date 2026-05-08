@@ -274,9 +274,9 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
 
             for (int i=num_args-1; i>=0; --i) {
                 (*new_list)[i] = pop();
-                push(LispVal(new_list));
-                break;
             }
+            push(LispVal(new_list));
+            break;
         }
         case OpCode::CAR: {
             LispVal val = pop();
