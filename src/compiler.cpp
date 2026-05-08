@@ -212,6 +212,13 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "cdr") {
+                if(l.size() != 2) throw runtime_error("cdr requires 1 argument");
+                compile(l[1]);
+                bytecode.push_back(Instruction(OpCode::CDR));
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }

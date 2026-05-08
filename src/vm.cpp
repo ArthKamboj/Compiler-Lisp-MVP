@@ -283,13 +283,21 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
             if(vec->empty()) throw runtime_error("car called on first item");
             push((*vec)[0]);
-            return;
+            break;
         }
         case OpCode::IS_EMPTY: {
             LispVal val = pop();
             auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
             push(LispVal(vec->empty()));
-            return;
+            break;
+        }
+        case OpCode::CDR: {
+            LispVal val = pop();
+            auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
+            if(vec->empty()) throw runtime_error("cdr called on empty list");
+            auto new_list = make_shared<vector<LispVal>>(vec->begin()+1, vec->end());
+            push(LispVal(new_list));
+            break;
         }
 
         default:
