@@ -16,8 +16,8 @@ void GarbageCollector::sweep() {
             deleted_count++;
         }
     }
-
+    
     heap = surviving_objects;
+    
+    cout << "\n[GC] Swept " << deleted_count << " objects. Heap size: " << heap.size() << endl;
 }
-
-cout << "\n[GC] Swept " << deleted_count << " objects. Heap size: " << heap.size() << endl;
