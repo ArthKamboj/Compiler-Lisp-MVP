@@ -246,7 +246,7 @@ void Compiler::compile(const LispVal& ast){
                 bytecode.push_back(Instruction(OpCode::CALL));
             }
         },
-        [this](const std::shared_ptr<std::vector<LispVal>>& vec) {
+        [this](GCList* vec) {
             bytecode.push_back(Instruction(OpCode::CONST, LispVal(vec)));
         }
 

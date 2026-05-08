@@ -12,7 +12,7 @@
 #include "environment.h"
 #include "compiler.h"
 #include "vm.h"
-// #include "gc.h"
+#include "gc.h"
 
 using namespace std;
 
@@ -52,7 +52,7 @@ const string BOOT_STDLIB = R"(
 )";
 
 
-void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler, vm& vima) {
+void execute(const string& code, Environment* env, Compiler& compiler, vm& vima) {
 
     cout << "Executing Script: " << code << endl;
 
@@ -90,7 +90,7 @@ void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler
     cout << "\n--------------\n";
 }
 
-void run_file(const string& filename, shared_ptr<Environment> env, Compiler& compiler, vm& virmac) {
+void run_file(const string& filename, Environment* env, Compiler& compiler, vm& virmac) {
 
     ifstream file(filename);
     if(!file.is_open()) {
@@ -105,7 +105,7 @@ void run_file(const string& filename, shared_ptr<Environment> env, Compiler& com
     execute(code, env, compiler, virmac);
 }
 
-void run_repl(shared_ptr<Environment> env, Compiler& compiler, vm& virmac) {
+void run_repl(Environment* env, Compiler& compiler, vm& virmac) {
     cout << "Micro-Lisp Interactive Prompt (Type 'exit' to quit)\n";
     string input;
 
@@ -131,9 +131,11 @@ int main(int argc, char* argv[]) {
 
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    auto global_env = make_shared<Environment>();
+    GarbageCollector master_gc;
+
+    Environment* global_env = master_gc.allocate<Environment>();
     Compiler master_compiler;
-    vm master_vm(global_env);
+    vm master_vm(global_env, master_gc);
 
     try {
         execute(BOOT_STDLIB, global_env, master_compiler, master_vm);
@@ -149,6 +151,8 @@ int main(int argc, char* argv[]) {
     else {
         run_repl(global_env, master_compiler, master_vm);
     }
+
+    cout << "\n[Engine Shutting Down] Final Heap Size: " << master_gc.size() << " objects." << endl;
 
     return 0;
 }
