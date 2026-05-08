@@ -16,6 +16,41 @@
 
 using namespace std;
 
+const string BOOT_STDLIB = R"(
+; --------------------------------------
+; Micro-Lisp Standard Boot Library
+; --------------------------------------
+
+; Logical NOT
+(define not (lambda (x) 
+    (if (= x #t) #f #t)))
+
+; Absolute Value
+(define abs (lambda (x) 
+    (if (< x 0) (* x -1) x)))
+
+; List Length (Recursive)
+(define length (lambda (lst)
+    (if (empty? lst)
+        0
+        (+ 1 (length (cdr lst))))))
+
+; Map: Apply a function to every item in a list
+(define map (lambda (func lst)
+    (if (empty? lst)
+        (list) ; return empty list
+        (cons (func (car lst)) 
+              (map func (cdr lst))))))
+
+; Filter: Keep only items where (func item) returns #t
+(define filter (lambda (func lst)
+    (if (empty? lst)
+        (list)
+        (if (func (car lst))
+            (cons (car lst) (filter func (cdr lst)))
+            (filter func (cdr lst))))))
+)";
+
 
 void execute(const string& code, shared_ptr<Environment> env, Compiler& compiler, vm& vima) {
 
@@ -99,6 +134,14 @@ int main(int argc, char* argv[]) {
     auto global_env = make_shared<Environment>();
     Compiler master_compiler;
     vm master_vm(global_env);
+
+    try {
+        execute(BOOT_STDLIB, global_env, master_compiler, master_vm);
+    }
+    catch (const exception& e) {
+        cerr << "FATAL ERROR LOADING STDLIB: " << e.what() << endl;
+        return 1;
+    }
 
     if(argc > 1) {
         run_file(argv[1], global_env, master_compiler, master_vm);

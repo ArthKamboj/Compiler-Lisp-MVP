@@ -37,7 +37,14 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             switch (inst.op)
         {
         case OpCode::CONST:
-            push(inst.operand);
+           if (holds_alternative<LispFunction>(inst.operand.value)) {
+                LispFunction func = get<LispFunction>(inst.operand.value);
+                func.env = this->env; 
+                push(LispVal(func));
+            }
+            else {
+                push(inst.operand);
+            }
             break;
 
         case OpCode::ADD:{
@@ -78,9 +85,41 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             break;
         }
         case OpCode::EQ: {
-            double b = get_num(pop());
-            double a = get_num(pop());
-            push(LispVal(a == b));
+            LispVal b_val = pop();
+            LispVal a_val = pop();
+            bool is_equal = false;
+
+            if (a_val.value.index() == b_val.value.index()) {
+                if (holds_alternative<double>(a_val.value)) {
+                    is_equal = (get<double>(a_val.value) == get<double>(b_val.value));
+                }
+                else if (holds_alternative<bool>(a_val.value)) {
+                    is_equal = (get<bool>(a_val.value) == get<bool>(b_val.value));
+                }
+                else if (holds_alternative<string>(a_val.value)) {
+                    is_equal = (get<string>(a_val.value) == get<string>(b_val.value));
+                }
+            }
+            push(LispVal(is_equal));
+            break;
+        }
+        case OpCode::NOT_EQ: {
+            LispVal b_val = pop();
+            LispVal a_val = pop();
+            bool is_equal = false;
+
+            if (a_val.value.index() == b_val.value.index()) {
+                if (holds_alternative<double>(a_val.value)) {
+                    is_equal = (get<double>(a_val.value) == get<double>(b_val.value));
+                }
+                else if (holds_alternative<bool>(a_val.value)) {
+                    is_equal = (get<bool>(a_val.value) == get<bool>(b_val.value));
+                }
+                else if (holds_alternative<string>(a_val.value)) {
+                    is_equal = (get<string>(a_val.value) == get<string>(b_val.value));
+                }
+            }
+            push(LispVal(!is_equal));
             break;
         }
         case OpCode::LESS_THAN: {
@@ -107,40 +146,37 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(LispVal(a >= b));
             break;
         }
-        case OpCode::NOT_EQ: {
-            double b = get_num(pop());
-            double a = get_num(pop());
-            push(LispVal(a != b));
+        case OpCode::JUMP: {
+            int offset = static_cast<int>(std::get<double>(inst.operand.value));
+            ip += offset; 
             break;
         }
         case OpCode::JUMP_IF_FALSE: {
-            LispVal condition = pop();
-            if (holds_alternative<bool>(condition.value) && !get<bool>(condition.value)) {
-                double offset = get<double>(inst.operand.value);
-                ip += static_cast<size_t>(offset); 
+            LispVal val = pop();
+            if (std::holds_alternative<bool>(val.value) && !std::get<bool>(val.value)) {
+                int offset = static_cast<int>(std::get<double>(inst.operand.value));
+                ip += offset;
             }
-            break;
-        }
-        case OpCode::JUMP: {
-            double offset = get<double>(inst.operand.value);
-            ip += static_cast<size_t>(offset);
             break;
         }
         case OpCode::CALL: {
-            LispVal func_val = pop();
-            if (!holds_alternative<LispFunction>(func_val.value)) {
-                throw runtime_error("Attempted to call a non-function");
+            LispVal val = pop();
+            LispFunction func = std::get<LispFunction>(val.value);
+            auto call_env = std::make_shared<Environment>(func.env);
+            
+            for (int i=func.params.size()-1; i>=0; --i) {
+                call_env->set(func.params[i], pop());
             }
-            LispFunction func = get<LispFunction>(func_val.value);
-            auto local_env = make_shared<Environment>(env);
 
-            for (int i = static_cast<int>(func.params.size()) - 1; i >= 0; --i) {
-                local_env->set(func.params[i], pop());
-            }
-            call_stack.push_back({ip, env});
-
+            CallFrame frame;
+            frame.return_ip = ip;
+            frame.return_env = this->env;
+            call_stack.push_back(frame);
+            
+            this->env = call_env;
+        
             ip = func.ip - 1; 
-            env = local_env;
+            
             break;
         }
         case OpCode::RETURN: {
