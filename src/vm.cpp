@@ -299,6 +299,17 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             push(LispVal(new_list));
             break;
         }
+        case OpCode::CONS: {
+            LispVal list_val = pop();
+            LispVal item_val = pop();
+            auto vec = get<shared_ptr<vector<LispVal>>>(list_val.value);
+
+            auto new_list = make_shared<vector<LispVal>>();
+            new_list->push_back(item_val);
+            new_list->insert(new_list->end(), vec->begin(), vec->end());
+            push(LispVal(new_list));
+            break;
+        }
 
         default:
             break;

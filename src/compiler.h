@@ -42,7 +42,9 @@ enum class OpCode{
     MAKE_LIST,
     CAR,
     IS_EMPTY,
-    CDR
+    CDR,
+    CONS
+    
 
 };
 

@@ -219,6 +219,14 @@ void Compiler::compile(const LispVal& ast){
                 return;
             }
 
+            if(op == "cons") {
+                if(l.size() != 3) throw runtime_error("cons requires 2 arguments (item and list)");
+                compile(l[1]);
+                compile(l[2]);
+                bytecode.push_back(Instruction(OpCode::CONS));
+                return;
+            }
+
             for(size_t i=1; i<l.size(); i++){
                 compile(l[i]);
             }
