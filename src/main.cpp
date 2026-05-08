@@ -3,7 +3,6 @@
 #include <vector>
 #include <list>
 #include <exception>
-#include <memory>
 #include <fstream>
 #include <sstream>
 
@@ -13,6 +12,7 @@
 #include "environment.h"
 #include "compiler.h"
 #include "vm.h"
+// #include "gc.h"
 
 using namespace std;
 

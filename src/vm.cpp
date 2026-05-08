@@ -54,7 +54,7 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
             switch (inst.op)
             {
                 case OpCode::CONST:
-                if (holds_alternative<LispFunction>(inst.operand.value)) {
+                    if (holds_alternative<LispFunction>(inst.operand.value)) {
                         LispFunction func = get<LispFunction>(inst.operand.value);
                         func.env = this->env; 
                         push(LispVal(func));
@@ -178,8 +178,9 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
                 }
                 case OpCode::CALL: {
                     LispVal val = pop();
-                    LispFunction func = std::get<LispFunction>(val.value);
-                    auto call_env = std::make_shared<Environment>(func.env);
+                    LispFunction func = get<LispFunction>(val.value);
+                    
+                    Environment* call_env = gc.allocate<Environment>(func.env);
                     
                     for (int i=func.params.size()-1; i>=0; --i) {
                         call_env->set(func.params[i], pop());
@@ -191,9 +192,8 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
                     call_stack.push_back(frame);
                     
                     this->env = call_env;
-                
                     ip = func.ip - 1; 
-                    
+            
                     break;
                 }
                 case OpCode::RETURN: {
@@ -323,43 +323,43 @@ LispVal vm::run(const vector<Instruction>& bytecode, size_t start_ip) {
                 //list
                 case OpCode::MAKE_LIST: {
                     int num_args = static_cast<int>(get<double>(inst.operand.value));
-                    auto new_list = make_shared<vector<LispVal>>(num_args);
+                    GCList* new_list = gc.allocate<GCList>(num_args);
 
                     for (int i=num_args-1; i>=0; --i) {
-                        (*new_list)[i] = pop();
+                        new_list->items[i] = pop();
                     }
                     push(LispVal(new_list));
                     break;
                 }
                 case OpCode::CAR: {
                     LispVal val = pop();
-                    auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
-                    if(vec->empty()) throw runtime_error("car called on first item");
-                    push((*vec)[0]);
+                    GCList* vec = get<GCList*>(val.value);
+                    if(vec->items.empty()) throw runtime_error("car called on first item");
+                    push(vec->items[0]);
                     break;
                 }
                 case OpCode::IS_EMPTY: {
                     LispVal val = pop();
-                    auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
-                    push(LispVal(vec->empty()));
+                    GCList* vec = get<GCList*>(val.value);
+                    push(LispVal(vec->items.empty()));
                     break;
                 }
                 case OpCode::CDR: {
                     LispVal val = pop();
-                    auto vec = get<shared_ptr<vector<LispVal>>>(val.value);
-                    if(vec->empty()) throw runtime_error("cdr called on empty list");
-                    auto new_list = make_shared<vector<LispVal>>(vec->begin()+1, vec->end());
+                    GCList* vec = get<GCList*>(val.value);
+                    if(vec->items.empty()) throw runtime_error("cdr called on empty list");
+                    GCList* new_list = gc.allocate<GCList>(vec->items.begin()+1, vec->items.end());
                     push(LispVal(new_list));
                     break;
                 }
                 case OpCode::CONS: {
                     LispVal list_val = pop();
                     LispVal item_val = pop();
-                    auto vec = get<shared_ptr<vector<LispVal>>>(list_val.value);
+                    GCList* vec = get<GCList*>(list_val.value);
 
-                    auto new_list = make_shared<vector<LispVal>>();
-                    new_list->push_back(item_val);
-                    new_list->insert(new_list->end(), vec->begin(), vec->end());
+                    GCList* new_list = gc.allocate<GCList>();
+                    new_list->items.push_back(item_val);
+                    new_list->items.insert(new_list->items.end(), vec->items.begin(), vec->items.end());
                     push(LispVal(new_list));
                     break;
                 }

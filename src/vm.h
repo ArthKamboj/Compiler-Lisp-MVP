@@ -9,7 +9,7 @@ using namespace std;
 
 struct CallFrame {
     size_t return_ip;
-    Environment* returrn_env;
+    Environment* return_env;
 };
 
 class vm {
