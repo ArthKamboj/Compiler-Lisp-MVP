@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-# include <memory>
+# include "gc.h"
 
 #include "compiler.h"
 #include "environment.h"
@@ -9,20 +9,25 @@ using namespace std;
 
 struct CallFrame {
     size_t return_ip;
-    shared_ptr<Environment> return_env;
+    Environment* returrn_env;
 };
 
-class vm
-{
-    private:
+class vm {
+
+    public:
         vector<LispVal> stack;
         vector<CallFrame> call_stack;
-        shared_ptr<Environment> env;
+        Environment* env;
+        size_t ip=0;
+
+        GarbageCollector& gc;
+        
+        vm(Environment* global_env, GarbageCollector& gc_instance) : env(global_env), gc(gc_instance) {}
 
         void push(const LispVal& val);
         LispVal pop();
 
-    public:
-        vm(shared_ptr<Environment> environment) : env(environment) {};
+        void mark_roots();
+        
         LispVal run(const vector<Instruction>& bytecode, size_t start_ip=0);
 };
