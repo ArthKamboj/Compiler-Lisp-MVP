@@ -3,7 +3,7 @@
 #include <vector>
 #include <variant>
 #include <iostream>
-#include <memory>
+#include "gc.h"
 
 using namespace std;
 
@@ -12,14 +12,24 @@ class Environment;
 
 using LispList = vector<LispVal>;
 
+struct GCList : public GCObject {
+    vector <LispVal> items;
+
+    GCList() = default;
+    GCList(size_t size) : items(size) {}
+
+    template<typename Iter>
+    GCList(Iter begin, Iter end) : items(begin, end) {}
+};
+
 struct LispFunction {
     vector<string> params;
     size_t ip;
-    shared_ptr<Environment> env;
+    Environment* env;
 };
 
 struct LispVal {
-    variant<double, bool, string, LispList, LispFunction, shared_ptr<vector<LispVal>>> value;
+    variant<double, bool, string, LispList, LispFunction, GCList*> value;
 
     LispVal() : value(false) {}
     LispVal(double n) : value(n) {}
@@ -28,7 +38,7 @@ struct LispVal {
     LispVal(LispList l) : value(l) {}
     LispVal(const char* s) : value(string(s)) {} 
     LispVal(LispFunction f) : value(f) {}
-    LispVal(shared_ptr<vector<LispVal>> ptr) : value(ptr) {}
+    LispVal(GCList* ptr) : value(ptr) {}
 };
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
@@ -49,13 +59,13 @@ inline void print_lisp_val(const LispVal& val){
             }
             cout << ")";
         },
-        [](const std::shared_ptr<std::vector<LispVal>>& vec) {
-            std::cout << "(";
-            for (size_t i = 0; i < vec->size(); ++i) {
-                print_lisp_val((*vec)[i]);
-                if (i < vec->size() - 1) std::cout << " ";
+        [](GCList* vec) {
+            cout << "(";
+            for (size_t i = 0; i < vec->items.size(); ++i) {
+                print_lisp_val(vec->items[i]);
+                if (i < vec->items.size() - 1) cout << " ";
             }
-            std::cout << ")";
+            cout << ")";
         }
     }, val.value);
     
