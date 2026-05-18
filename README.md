@@ -6,7 +6,7 @@ Designed without relying on external parser generators (like Bison/Yacc) or LLVM
 
 It supports interactive execution via a REPL (Read-Eval-Print Loop) and batch execution of `.lisp` script files.
 
-## ✨ Features
+## Features
 
 * **Costum Pipeline:** Handwritten Lexer, Recursive Descent Parser, and Bytecode Compiler.
 
@@ -23,7 +23,7 @@ It supports interactive execution via a REPL (Read-Eval-Print Loop) and batch ex
 
 * **Interactive REPL:** A real-time Read-Eval-Print Loop with state persistence across inputs.
 
-## 🏗️ Architecture
+## Architecture
 
 * **State-Machine Lexer:** A robust token scanner scans raw ASCII strings and tokenizes them into categorised symbols (parentheses, numbers, strings, identifiers).
 
@@ -57,7 +57,7 @@ It supports interactive execution via a REPL (Read-Eval-Print Loop) and batch ex
   g++ -std=c++17 main.cpp gc.cpp lexer.cpp parser.cpp compiler.cpp vm.cpp -o lisp_compiler
   ```
 
-## 🚀 Usage
+## Usage
 
 The engine supports two modes of execution:
 
@@ -182,7 +182,7 @@ Using the self-hosted boot library, you can easily map and filter arrays.
 ; Output: (2 4 6)
 ```
 
-##  📂 Project Structure
+## Project Structure
 
     
 | File | Responsibility |
