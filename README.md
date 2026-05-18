@@ -37,7 +37,7 @@ It supports interactive execution via a REPL (Read-Eval-Print Loop) and batch ex
 
 * **Garbage Collector:** Intercepts memory allocations. When the heap reaches a threshold, it pauses the VM, traces active root variables, and safely deletes inaccessible environments and lists.
 
-## 🛠️ Build Instructions
+## Build Instructions
 
 ### Prerequisites
 
@@ -92,7 +92,7 @@ OR
 lisp_compiler.exe script.lisp (Windows)
 ```
 
-## 📖 Syntax and Examples
+## Syntax and Examples
 
 ### Variable, Math & Logic
 Micro-Lisp supports a wide array of functional programming paradigms natively. it uses prefix notation (the operator comes first).
